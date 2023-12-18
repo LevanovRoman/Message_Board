@@ -6,6 +6,7 @@ from .utils import send_otp
 from datetime import datetime
 import pyotp
 from django.contrib.auth.models import User
+from .forms import RegisterUserForm
 
 
 menu = [
@@ -83,3 +84,14 @@ def logout_view(request):
     return redirect('main')
 
 
+def register(request):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)  # создание объекта без сохранения в БД
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            return redirect('main')
+    else:
+        form = RegisterUserForm()
+    return render(request, 'mainapp/reg-2.html', {'form': form})

@@ -59,7 +59,7 @@
           <a href="{% url 'login' %}" class="btn btn-secondary">Вход</a>
         </li>
          <li class="nav-item ms-2 d-done d-md-inline">
-          <a href="{% url 'login' %}" class="btn btn-secondary">Регистрация</a>
+          <a href="{% url 'register' %}" class="btn btn-secondary">Регистрация</a>
         </li>
 				{% endif %}
 				{% if user.is_superuser or user.is_staff %}
