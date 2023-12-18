@@ -94,4 +94,4 @@ def register(request):
             return redirect('main')
     else:
         form = RegisterUserForm()
-    return render(request, 'mainapp/reg-2.html', {'form': form})
+    return render(request, 'mainapp/registration.html', {'form': form})
