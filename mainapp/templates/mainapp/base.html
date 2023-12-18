@@ -48,34 +48,25 @@
                     </li>
           {% endfor %}
 				{% if user.is_authenticated %}
-					<li><span>{{ user.username }}</span></li>
-					<li><a href="#">Выйти</a></li>
+          <li class="nav-item">
+              <a href="#topics" class="nav-link">{{ user.username }}</a>
+          </li>
+          <li class="nav-item ms-2 d-done d-md-inline">
+                <a href="{% url 'logout' %}" class="btn btn-secondary">Выйти</a>
+          </li>
 				{% else %}
          <li class="nav-item ms-2 d-done d-md-inline">
-          <a href="#pricing" class="btn btn-secondary">Вход</a>
+          <a href="{% url 'login' %}" class="btn btn-secondary">Вход</a>
         </li>
          <li class="nav-item ms-2 d-done d-md-inline">
-          <a href="#pricing" class="btn btn-secondary">Регистрация</a>
+          <a href="{% url 'login' %}" class="btn btn-secondary">Регистрация</a>
         </li>
 				{% endif %}
 				{% if user.is_superuser or user.is_staff %}
           <li class="nav-item ms-2 d-done d-md-inline">
-          <a href="#pricing" class="btn btn-secondary">Админ</a>
+          <a href="{% url 'admin:index' %}" class="btn btn-secondary">Админ</a>
         </li>
 				{% endif %}
-<!--        <li class="nav-item">-->
-<!--          <a href="#topics" class="nav-link">Категории</a>-->
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--          <a href="#reviews" class="nav-link">Reviews</a>-->
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--          <a href="#contact" class="nav-link">Get in Touch</a>-->
-<!--        </li>-->
-<!--        <li class="nav-item d-md-none">-->
-<!--          <a href="#pricing" class="nav-link">Pricing</a>-->
-<!--        </li>-->
-
       </ul>
     </div>
   </div>

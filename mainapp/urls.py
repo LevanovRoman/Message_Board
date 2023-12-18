@@ -3,7 +3,11 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path('', MainPage.as_view(), name='main'),
+    # path('', MainPage.as_view(), name='main'),
+    path('', main_view, name='main'),
+    path('login/', login_view, name='login'),
+    path('otp/', otp_view, name='otp'),
+    path('logout/', logout_view, name='logout'),
     # path('news/', ShowAllNews.as_view(), name='show_all_news'),
     # path('articles/', ShowAllArticles.as_view(), name='show_all_articles'),
     # path('news/create/', CreateNews.as_view(), name='create_news'),
