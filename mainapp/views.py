@@ -11,8 +11,8 @@ from .forms import RegisterUserForm
 
 menu = [
     {'title': 'Главная', 'url_name': 'main'},
-    {'title': 'Новости', 'url_name': 'show_all_news'},
-    {'title': 'Статьи', 'url_name': 'show_all_articles'},
+    {'title': 'Новости', 'url_name': 'login'},
+    {'title': 'Статьи', 'url_name': 'logout'},
 ]
 
 
@@ -24,30 +24,25 @@ def main_view(request):
     return render(request, 'mainapp/board.html', context=context)
 
 
-# class MainPage(TemplateView):
-#     # model = Post
-#     template_name = 'mainapp/board.html'
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['menu'] = menu
-#         context['title'] = 'Главная'
-#         return context
-
-
 def login_view(request):
     error_message = None
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
-            send_otp(request)
-            request.session['username'] = username
-            return redirect('otp')
+        if user and user.is_active:
+            login(request, user)
+            return redirect('main')
         else:
             error_message = "Invalid username or password"
     return render(request, 'mainapp/login.html', {error_message: error_message})
+    #     if user is not None:
+    #         send_otp(request)
+    #         request.session['username'] = username
+    #         return redirect('otp')
+    #     else:
+    #         error_message = "Invalid username or password"
+    # return render(request, 'mainapp/login.html', {error_message: error_message})
 
 
 def otp_view(request):
@@ -91,7 +86,10 @@ def register(request):
             user = form.save(commit=False)  # создание объекта без сохранения в БД
             user.set_password(form.cleaned_data['password'])
             user.save()
-            return redirect('main')
+            send_otp(request)
+            username = request.POST['username']
+            request.session['username'] = username
+            return redirect('otp')
     else:
         form = RegisterUserForm()
     return render(request, 'mainapp/registration.html', {'form': form})
