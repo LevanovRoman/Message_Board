@@ -86,7 +86,7 @@ def register(request):
             user = form.save(commit=False)  # создание объекта без сохранения в БД
             user.set_password(form.cleaned_data['password'])
             user.save()
-            send_otp(request)
+            send_otp(request, request.POST['email'])
             username = request.POST['username']
             request.session['username'] = username
             return redirect('otp')
