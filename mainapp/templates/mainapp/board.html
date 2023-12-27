@@ -18,8 +18,8 @@
   <div class="card mb-4" >
 
       <div class="embed-responsive embed-responsive-4by3">
-        {% if p.image %}
-        <img src="{% static 'mainapp/images/card-3.jpg' %}" class="card-img-top" alt="...">
+        {% if p.photo %}
+        <img src="{{p.photo.url}}" class="card-img-top" alt="...">
         {% else %}
         <img src="{% static 'mainapp/images/card.jpg' %}" class="card-img-top" alt="...">
       {% endif %}
