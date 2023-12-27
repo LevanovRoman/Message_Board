@@ -44,15 +44,15 @@
 
           {% for m in menu %}
                     <li class="nav-item">
-                      <a href="{% url m.url_name %}" class="nav-link">{{m.title}}</a>
+                      <a href="{% url m.url_name %}" class="fw-bold nav-link">{{m.title}}</a>
                     </li>
           {% endfor %}
 				{% if user.is_authenticated %}
           <li class="nav-item">
-              <a href="{% url 'create_post' %}" class="nav-link">Создать пост</a>
+              <a href="{% url 'create_post' %}" class="fw-bold nav-link">Создать пост</a>
           </li>
           <li class="nav-item">
-              <a href="#topics" class="nav-link" style="color: red; font-size: 20px; margin-left: 30px;">{{ user.username }}</a>
+              <a href="#topics" class="fw-bold nav-link" style="color: red; font-size: 20px; margin-left: 30px;">{{ user.username }}</a>
           </li>
           <li class="nav-item ms-2 d-done d-md-inline">
                 <a href="{% url 'logout' %}" class="btn btn-secondary">Выйти</a>
