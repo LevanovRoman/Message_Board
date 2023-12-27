@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.models import User
 
+from .models import Post
+
 
 class RegisterUserForm(forms.ModelForm):
     username = forms.CharField(label="Логин")
@@ -27,3 +29,8 @@ class RegisterUserForm(forms.ModelForm):
             raise forms.ValidationError("Такой E-mail уже существует!")
         return email
 
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('title', 'text', 'category')

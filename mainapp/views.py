@@ -1,27 +1,97 @@
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, CreateView, DetailView, DeleteView, UpdateView
 from .utils import send_otp
 from datetime import datetime
 import pyotp
 from django.contrib.auth.models import User
-from .forms import RegisterUserForm
+
+from .forms import RegisterUserForm, PostForm
+from .models import *
 
 
 menu = [
     {'title': 'Главная', 'url_name': 'main'},
-    {'title': 'Новости', 'url_name': 'login'},
+    {'title': 'Yet now', 'url_name': 'login'},
     {'title': 'Статьи', 'url_name': 'logout'},
 ]
 
 
 def main_view(request):
+    posts = Post.objects.all()
     if 'username' in request.session:
         del request.session['username']
     context = {'menu': menu,
+               'posts': posts,
                'title': 'Главная'}
     return render(request, 'mainapp/board.html', context=context)
+
+
+class ShowPost(DetailView):
+    model = Post
+    template_name = 'mainapp/post-page.html'
+    slug_url_kwarg = 'post_slug'
+    context_object_name = 'post'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = menu
+        context['title'] = "Пост"
+        return context
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('post', kwargs={'post_slug': self.get_object().slug})
+
+
+class CreatePost(CreateView):
+    # permission_required = ('mainapp.add_post',)
+    # form_class = PostForm
+    model = Post
+    template_name = 'mainapp/post-create.html'
+    success_url = reverse_lazy('main')
+    fields = ('title', 'text', 'category')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = menu
+        context['title'] = 'Создание поста'
+        return context
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        us = self.request.user.username
+        post.user = User.objects.get(username=us)
+        post.save()
+        return super().form_valid(form)
+
+
+class UpdatePost(UpdateView):
+    # permission_required = ('mainapp.change_post',)
+    model = Post
+    fields = ('title', 'text', 'category')
+    template_name = 'mainapp/post-update.html'
+    success_url = reverse_lazy('main')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = menu
+        context['title'] = 'Изменение поста'
+        return context
+
+
+class DeletePost(DeleteView):
+    permission_required = ('mainapp.delete_post',)
+    model = Post
+    template_name = 'mainapp/post-delete.html'
+    success_url = reverse_lazy('main')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = menu
+        context['title'] = 'Удаление поста'
+        return context
 
 
 def login_view(request):

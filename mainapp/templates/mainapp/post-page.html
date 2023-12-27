@@ -1,0 +1,42 @@
+{% extends 'mainapp/base.html' %}
+{% load static %}
+
+{% block one_post %}
+<section id="reviews" class="bg-light">
+    <div class="row justify-content-center my-5">
+      <div class="col-lg-8">
+        <div class="list-group">
+          <div class="list-group-item py-3">
+
+			  <div class="card">
+
+      <div class="embed-responsive embed-responsive-4by3">
+        {% if post.image %}
+        <img src="{% static 'mainapp/images/ebook-cover.jpg' %}" class="card-img-top" alt="...">
+        {% else %}
+        <img src="{% static 'mainapp/images/card-3.jpg' %}" class="card-img-top" alt="...">
+      {% endif %}
+     </div>
+  <div class="card-body">
+    <h5 class="card-title">{{ post.title }}</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">{{ post.text }}</li>
+    <li class="list-group-item">Автор: {{ post.user }}</li>
+    <li class="list-group-item">Категория: {{ post.category }}</li>
+    <li class="list-group-item">Дата:  {{ post.time_created }}</li>
+  </ul>
+ {% if user.username == post.user.username %}
+  <div class="card-body">
+    <a href='{% url "update_post" slug=post.slug %}' class="btn btn-primary">Редактировать</a>
+    <a href='{% url "delete_post" slug=post.slug %}' class="btn btn-primary">Удалить</a>
+  </div>
+ {% endif %}
+
+  </div>
+ </div>
+  </div>
+ </div>
+ </div>
+</section>
+{% endblock %}

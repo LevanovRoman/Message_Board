@@ -7,59 +7,40 @@
   <div class="container-lg">
     <div class="text-center">
       <h2><i class="bi bi-stars"></i> Объявления</h2>
-      <p class="lead">What my students have said about the book ...</p>
+      <p class="lead">Фанатский сервер одной известной MMORPG ...</p>
     </div>
 
     <div class="row justify-content-center my-5">
       <div class="col-lg-8">
         <div class="list-group">
-          <div class="list-group-item py-3">
-            <div class="pb-2">
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-            </div>
-            <h5 class="mb-1">A must buy for every aspiring web dev</h5>
-            <p class="mb-1">Lorem ipsum dolor sit amet consectetur adipisicing elit. Est optio ut, laborum totam officia culpa beatae ea qui nemo unde facilis praesentium at corporis consequuntur quas ab illum voluptatibus ducimus!</p>
-            <small>Review by Mario</small>
-          </div>
 
-          <div class="list-group-item py-3">
-            <div class="pb-2">
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-              <i class="bi bi-star-fill"></i>
-            </div>
-            <h5 class="mb-1">A must buy for every aspiring web dev</h5>
-            <p class="mb-1">Lorem ipsum dolor sit amet consectetur adipisicing elit. Est optio ut, laborum totam officia culpa beatae ea qui nemo unde facilis praesentium at corporis consequuntur quas ab illum voluptatibus ducimus!</p>
-            <small>Review by Mario</small>
-          </div>
-<!-- <div class="row row-cols-1 row-cols-md-2 g-4"> -->
-            <div class="col">
-    <div class="card">
-     <div class="embed-responsive embed-responsive-4by3">
-      <img src="{% static 'mainapp/images/card-3.jpg' %}" class="card-img-top" alt="...">
-     </div>
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
+{% for p in posts %}
+  <div class="card mb-4" >
+
       <div class="embed-responsive embed-responsive-4by3">
-        <img src="{% static 'mainapp/images/ebook-cover.jpg' %}" class="card-img-top" alt="...">
-      </div>
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        {% if p.image %}
+        <img src="{% static 'mainapp/images/card-3.jpg' %}" class="card-img-top" alt="...">
+        {% else %}
+        <img src="{% static 'mainapp/images/card.jpg' %}" class="card-img-top" alt="...">
+      {% endif %}
+     </div>
+  <div class="card-body">
+    <h5 class="card-title">{{ p.title }}</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">{{ p.text|truncatewords:12 }}</li>
+    <li class="list-group-item">Автор: {{ p.user }}</li>
+    <li class="list-group-item">Категория: {{ p.category }}</li>
+    <li class="list-group-item">Дата:  {{ p.time_created }}</li>
+  </ul>
+  <div class="card-body">
+    <a href="{{ p.get_absolute_url }}" class="btn btn-primary">Посмотреть</a>
+  </div>
+</div>
+{% endfor %}
+ </div>
+  </div>
       </div>
     </div>
-  </div>
-
+</section>
 {% endblock %}
