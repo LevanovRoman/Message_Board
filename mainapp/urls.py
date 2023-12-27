@@ -18,6 +18,6 @@ urlpatterns = [
     path('news/delete/<slug:slug>/', DeletePost.as_view(), name='delete_post'),
     # path('accounts/', include('allauth.urls'), name='accounts'),
     # path('get_author/', get_author, name='upgrade'),
-    # path('category/<slug:category_slug>/', CategoryPostList.as_view(), name='category'),
-    # path('subscr/<slug:slug>/', subscr, name='subscr'),
+    path('category/<slug:category_slug>/', CategoryPostList.as_view(), name='category'),
+    path('subscr/<slug:slug>/', subscr, name='subscr'),
 ]

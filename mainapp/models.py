@@ -9,6 +9,7 @@ from .utils import transliteration
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='Категория')
     slug = models.SlugField(max_length=50, unique=True, db_index=True, verbose_name="Slug")
+    subscribers = models.ManyToManyField(User, verbose_name='Подписки', related_name='followers', blank=True)
 
     def __str__(self):
         return self.name
@@ -19,6 +20,10 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'category_slug': self.slug})
+
+    def get_users_list(self):
+        queryset_users = self.subscribers.values()
+        return [i['username'] for i in queryset_users]
 
 
 class Post(models.Model):

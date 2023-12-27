@@ -11,10 +11,10 @@
 			  <div class="card">
 
       <div class="embed-responsive embed-responsive-4by3">
-        {% if post.image %}
-        <img src="{% static 'mainapp/images/ebook-cover.jpg' %}" class="card-img-top" alt="...">
+        {% if post.photo %}
+        <img src="{{post.photo.url}}" class="card-img-top" alt="...">
         {% else %}
-        <img src="{% static 'mainapp/images/card-3.jpg' %}" class="card-img-top" alt="...">
+        <img src="{% static 'mainapp/images/card.jpg' %}" class="card-img-top" alt="...">
       {% endif %}
      </div>
   <div class="card-body">

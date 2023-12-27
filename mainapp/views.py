@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, DetailView, DeleteView, UpdateView
+from django.views.generic import TemplateView, CreateView, DetailView, DeleteView, UpdateView, ListView
 from .utils import send_otp
 from datetime import datetime
 import pyotp
@@ -43,6 +44,35 @@ class ShowPost(DetailView):
 
     def get_success_url(self, **kwargs):
         return reverse_lazy('post', kwargs={'post_slug': self.get_object().slug})
+
+
+class CategoryPostList(ListView):
+    model = Category
+    template_name = 'mainapp/index.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat = Category.objects.get(slug=self.kwargs['category_slug'])
+        context['title'] = 'Категория:    ' + cat.name
+        context['cat'] = cat.slug
+        context['cat_name'] = cat.name
+        context['cat_list'] = cat.get_users_list
+        context['menu'] = menu
+        return context
+
+    def get_queryset(self):
+        return Post.objects.filter(category__slug=self.kwargs['category_slug'])
+
+
+def subscr(request, slug):
+    users = User.objects.all()
+    if request.user in users:
+        cat = Category.objects.get(slug=slug)
+        cat.subscribers.add(request.user)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        return redirect('register')
 
 
 class CreatePost(CreateView):
