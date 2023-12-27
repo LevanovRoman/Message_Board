@@ -24,6 +24,15 @@
     <li class="list-group-item">{{ post.text }}</li>
     <li class="list-group-item">Автор: {{ post.user }}</li>
     <li class="list-group-item">Категория: {{ post.category }}</li>
+    <li class="list-group-item">Видео:
+      {% if post.video_file %}
+      <video width="500px" height="500px" controls>
+        <source src="{{ post.video_file.url }}" type="video/mp4">
+      </video>
+        {% else %}
+        нет видео
+      {% endif %}
+    </li>
     <li class="list-group-item">Дата:  {{ post.time_created }}</li>
   </ul>
  {% if user.username == post.user.username %}

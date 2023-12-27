@@ -38,6 +38,16 @@
     <li class="list-group-item">{{ p.text|truncatewords:12 }}</li>
     <li class="list-group-item">Автор: {{ p.user }}</li>
     <li class="list-group-item">Категория: {{ p.category }}</li>
+    <li class="list-group-item">Видео:
+      {% if p.video_file %}
+        <video width="500px" height="500px" controls>
+        <source src="{{ p.video_file.url }}" type="video/mp4">
+      </video>
+        {% else %}
+        нет видео
+      {% endif %}
+
+    </li>
     <li class="list-group-item">Дата:  {{ p.time_created }}</li>
   </ul>
   <div class="card-body">

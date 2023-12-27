@@ -33,6 +33,7 @@ class Post(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория',
                                  related_name="category_post")
     photo = models.ImageField(upload_to="photos/%Y/%m/%d", blank=True)
+    video_file = models.FileField(upload_to='post_video', blank=True, null=True)
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Slug")
 

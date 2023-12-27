@@ -81,7 +81,7 @@ class CreatePost(CreateView):
     model = Post
     template_name = 'mainapp/post-create.html'
     success_url = reverse_lazy('main')
-    fields = ('title', 'text', 'category', 'photo')
+    fields = ('title', 'text', 'category', 'photo', 'video_file')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -100,7 +100,7 @@ class CreatePost(CreateView):
 class UpdatePost(UpdateView):
     # permission_required = ('mainapp.change_post',)
     model = Post
-    fields = ('title', 'text', 'category', 'photo')
+    fields = ('title', 'text', 'category', 'photo', 'video_file')
     template_name = 'mainapp/post-update.html'
     success_url = reverse_lazy('main')
 
