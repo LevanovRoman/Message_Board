@@ -61,7 +61,9 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_comment', verbose_name='Пост')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment', verbose_name='Пользователь')
     text = models.TextField(verbose_name='Текст')
+    slug = models.SlugField(max_length=20, db_index=True, unique=True, verbose_name="Slug")
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    status = models.BooleanField(default=False, verbose_name='Активно')
 
     def __str__(self):
         return f"Post: {self.post} - user: {self.user}"
@@ -69,6 +71,9 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+    def get_absolute_url(self):
+        return reverse('comment', kwargs={'comment_slug': self.slug})
 
 
 

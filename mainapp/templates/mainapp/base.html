@@ -41,13 +41,13 @@
     <!-- navbar links -->
     <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
       <ul class="navbar-nav">
-
-          {% for m in menu %}
-                    <li class="nav-item">
-                      <a href="{% url m.url_name %}" class="fw-bold nav-link">{{m.title}}</a>
-                    </li>
-          {% endfor %}
+          <li class="nav-item">
+              <a href="{% url 'main' %}" class="fw-bold nav-link">Главная</a>
+          </li>
 				{% if user.is_authenticated %}
+          <li class="nav-item">
+              <a href="{% url 'comments' %}" class="fw-bold nav-link">Отклики</a>
+          </li>
           <li class="nav-item">
               <a href="{% url 'create_post' %}" class="fw-bold nav-link">Создать пост</a>
           </li>

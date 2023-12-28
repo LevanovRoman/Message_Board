@@ -3,47 +3,61 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, DetailView, DeleteView, UpdateView, ListView
+from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, ListView
+from django.views.generic.edit import FormMixin
+
 from .utils import send_otp
 from datetime import datetime
 import pyotp
 from django.contrib.auth.models import User
 
-from .forms import RegisterUserForm, PostForm
+from .forms import RegisterUserForm, PostForm, CommentForm
 from .models import *
 
 
-menu = [
-    {'title': 'Главная', 'url_name': 'main'},
-    {'title': 'Yet now', 'url_name': 'login'},
-    {'title': 'Статьи', 'url_name': 'logout'},
-]
+# menu = [
+#     {'title': 'Главная', 'url_name': 'main'},
+#     {'title': 'Yet now', 'url_name': 'login'},
+#     {'title': 'Статьи', 'url_name': 'logout'},
+# ]
 
 
 def main_view(request):
     posts = Post.objects.all()
     if 'username' in request.session:
         del request.session['username']
-    context = {'menu': menu,
-               'posts': posts,
+    context = {'posts': posts,
                'title': 'Главная'}
     return render(request, 'mainapp/board.html', context=context)
 
 
-class ShowPost(DetailView):
+class ShowPost(FormMixin, DetailView):
     model = Post
+    form_class = CommentForm
     template_name = 'mainapp/post-page.html'
     slug_url_kwarg = 'post_slug'
     context_object_name = 'post'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = "Пост"
         return context
 
     def get_success_url(self, **kwargs):
         return reverse_lazy('post', kwargs={'post_slug': self.get_object().slug})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        return self.form_invalid(form)
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.post = self.get_object()
+        self.object.user = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
 
 class CategoryPostList(ListView):
@@ -58,7 +72,6 @@ class CategoryPostList(ListView):
         context['cat'] = cat.slug
         context['cat_name'] = cat.name
         context['cat_list'] = cat.get_users_list
-        context['menu'] = menu
         return context
 
     def get_queryset(self):
@@ -85,7 +98,6 @@ class CreatePost(CreateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = 'Создание поста'
         return context
 
@@ -106,7 +118,6 @@ class UpdatePost(UpdateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = 'Изменение поста'
         return context
 
@@ -119,9 +130,34 @@ class DeletePost(DeleteView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
         context['title'] = 'Удаление поста'
         return context
+
+
+class CommentsPage(ListView):
+    model = Post
+    template_name = 'mainapp/comments-page.html'
+    context_object_name = 'posts2'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        posts = Post.objects.filter(user=user)
+        context['posts'] = posts
+        commm = Comment.objects.filter(post__user=user)
+        context['commm'] = commm
+
+
+        # context['title'] = 'Категория:    ' + cat.name
+        # context['cat'] = cat.slug
+        # context['cat_name'] = cat.name
+        # context['cat_list'] = cat.get_users_list
+        return context
+
+    # def get_queryset(self):
+    #     qs = super().get_queryset()
+    #     user = self.request.user
+    #     return qs.filter(user=user)
 
 
 def login_view(request):
@@ -193,3 +229,17 @@ def register(request):
     else:
         form = RegisterUserForm()
     return render(request, 'mainapp/registration.html', {'form': form})
+
+
+def comm_delete(request, slug):
+    comment = Comment.objects.get(slug=slug)
+    comment.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def comm_add(request, slug):
+    comment = Comment.objects.get(slug=slug)
+    comment.status = True
+    comment.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
