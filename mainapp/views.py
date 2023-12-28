@@ -13,13 +13,7 @@ from django.contrib.auth.models import User
 
 from .forms import RegisterUserForm, PostForm, CommentForm
 from .models import *
-
-
-# menu = [
-#     {'title': 'Главная', 'url_name': 'main'},
-#     {'title': 'Yet now', 'url_name': 'login'},
-#     {'title': 'Статьи', 'url_name': 'logout'},
-# ]
+from .filters import CommentFilter
 
 
 def main_view(request):
@@ -89,8 +83,6 @@ def subscr(request, slug):
 
 
 class CreatePost(CreateView):
-    # permission_required = ('mainapp.add_post',)
-    # form_class = PostForm
     model = Post
     template_name = 'mainapp/post-create.html'
     success_url = reverse_lazy('main')
@@ -137,27 +129,17 @@ class DeletePost(DeleteView):
 class CommentsPage(ListView):
     model = Post
     template_name = 'mainapp/comments-page.html'
-    context_object_name = 'posts2'
+    context_object_name = 'comments'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        posts = Post.objects.filter(user=user)
-        context['posts'] = posts
-        commm = Comment.objects.filter(post__user=user)
-        context['commm'] = commm
-
-
-        # context['title'] = 'Категория:    ' + cat.name
-        # context['cat'] = cat.slug
-        # context['cat_name'] = cat.name
-        # context['cat_list'] = cat.get_users_list
+        context['filterset'] = self.filterset
         return context
 
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     user = self.request.user
-    #     return qs.filter(user=user)
+    def get_queryset(self):
+        queryset = Comment.objects.filter(post__user=self.request.user)
+        self.filterset = CommentFilter(self.request.GET, queryset)
+        return self.filterset.qs
 
 
 def login_view(request):
