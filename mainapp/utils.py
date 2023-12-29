@@ -1,6 +1,10 @@
 import pyotp
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+from django.conf import settings
 
 
 dic = {'ь': '', 'ъ': '', 'а': 'a', 'б': 'b', 'в': 'v',
@@ -34,3 +38,24 @@ def send_otp(request, email):
     )
 
 
+def mailing_task(title, mail_set, text, slug, template_name):
+    print("MAILING")
+    print(settings.EMAIL_HOST_USER)
+    subject = f'Новое на сайте'
+    html_content = render_to_string(
+        template_name,
+        {
+            'title': title,
+            'text': text,
+            'link': f'{settings.ALLOWED_HOSTS[1]}/post/{slug}/',
+        }
+    )
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=title,
+        from_email=settings.EMAIL_HOST_USER,
+        to=mail_set,
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    print("SEND")
