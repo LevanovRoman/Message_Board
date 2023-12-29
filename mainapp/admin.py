@@ -16,7 +16,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'post', 'user', 'time_created', 'text')
+    list_display = ('id', 'post', 'user', 'time_created', 'text', 'slug')
     list_display_links = ('id', 'post')
     prepopulated_fields = {"slug": ("text",)}
 

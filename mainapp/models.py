@@ -1,3 +1,4 @@
+from autoslug import AutoSlugField
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -61,7 +62,10 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_comment', verbose_name='Пост')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment', verbose_name='Пользователь')
     text = models.TextField(verbose_name='Текст')
-    slug = models.SlugField(max_length=20, db_index=True, unique=True, verbose_name="Slug")
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Slug")
+    # slug = AutoSlugField(populate_from=lambda instance: instance.title,
+    #                      unique_with=['author__name', 'pub_date__month'],
+    #                      slugify=lambda value: value.replace(' ', '-')),
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     status = models.BooleanField(default=False, verbose_name='Активно')
 

@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, logout, login
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -14,6 +13,7 @@ from django.contrib.auth.models import User
 from .forms import RegisterUserForm, PostForm, CommentForm
 from .models import *
 from .filters import CommentFilter
+from .utils import mailing_task
 
 
 def main_view(request):
@@ -223,5 +223,9 @@ def comm_add(request, slug):
     comment = Comment.objects.get(slug=slug)
     comment.status = True
     comment.save()
+    author_mail = comment.user.email
+    template_name = 'mainapp/message_comment_accepted.html'
+    mailing_task(comment.text, [author_mail, ],
+                 comment.text, comment.post.slug, template_name)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
