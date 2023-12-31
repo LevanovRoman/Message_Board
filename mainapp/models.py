@@ -1,4 +1,3 @@
-from autoslug import AutoSlugField
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -78,6 +77,11 @@ class Comment(models.Model):
 
     def get_absolute_url(self):
         return reverse('comment', kwargs={'comment_slug': self.slug})
+
+    def save(self, *args, **kwargs):  # new
+        if not self.slug:
+            self.slug = slugify(self.text[:25])
+        return super().save(*args, **kwargs)
 
 
 

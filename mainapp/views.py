@@ -102,7 +102,6 @@ class CreatePost(CreateView):
 
 
 class UpdatePost(UpdateView):
-    # permission_required = ('mainapp.change_post',)
     model = Post
     fields = ('title', 'text', 'category', 'photo', 'video_file')
     template_name = 'mainapp/post-update.html'
@@ -115,7 +114,6 @@ class UpdatePost(UpdateView):
 
 
 class DeletePost(DeleteView):
-    permission_required = ('mainapp.delete_post',)
     model = Post
     template_name = 'mainapp/post-delete.html'
     success_url = reverse_lazy('main')
@@ -154,13 +152,6 @@ def login_view(request):
         else:
             error_message = "Invalid username or password"
     return render(request, 'mainapp/login.html', {error_message: error_message})
-    #     if user is not None:
-    #         send_otp(request)
-    #         request.session['username'] = username
-    #         return redirect('otp')
-    #     else:
-    #         error_message = "Invalid username or password"
-    # return render(request, 'mainapp/login.html', {error_message: error_message})
 
 
 def otp_view(request):
@@ -175,7 +166,7 @@ def otp_view(request):
             valid_until = datetime.fromisoformat(otp_valid_date)
 
             if valid_until > datetime.now():
-                totp = pyotp.TOTP(otp_secret_key, interval=60)
+                totp = pyotp.TOTP(otp_secret_key, interval=180)
                 if totp.verify(otp):
                     user = get_object_or_404(User, username=username)
                     login(request, user)

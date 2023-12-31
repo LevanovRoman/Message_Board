@@ -24,16 +24,16 @@ def transliteration(x):
 
 
 def send_otp(request, email):
-    totp = pyotp.TOTP(pyotp.random_base32(), interval=60)
+    totp = pyotp.TOTP(pyotp.random_base32(), interval=180)
     otp = totp.now()
     request.session['otp_secret_key'] = totp.secret
-    valid_date = datetime.now() + timedelta(minutes=1)
+    valid_date = datetime.now() + timedelta(minutes=3)
     request.session['otp_valid_date'] = str(valid_date)
 
     send_mail(
         subject='Code for registration',
         message=f'Code for registration is  {otp}',
-        from_email='levanovroman2016@yandex.ru',
+        from_email=settings.EMAIL_HOST_USER,
         recipient_list=[email,]
     )
 
