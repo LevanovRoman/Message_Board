@@ -8,7 +8,6 @@ from django.views.generic.edit import FormMixin
 from .utils import send_otp
 from datetime import datetime
 import pyotp
-from django.contrib.auth.models import User
 
 from .forms import RegisterUserForm, PostForm, CommentForm
 from .models import *

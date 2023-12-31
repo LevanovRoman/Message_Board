@@ -47,10 +47,6 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post', kwargs={'post_slug': self.slug})
 
-    # def get_category_list(self):
-    #     queryset_category = self.category.values()
-    #     return [i['name'] for i in queryset_category]
-
     def save(self, *args, **kwargs):
         string = transliteration(self.title)
         self.slug = slugify(string)
@@ -62,9 +58,6 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comment', verbose_name='Пользователь')
     text = models.TextField(verbose_name='Текст')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="Slug")
-    # slug = AutoSlugField(populate_from=lambda instance: instance.title,
-    #                      unique_with=['author__name', 'pub_date__month'],
-    #                      slugify=lambda value: value.replace(' ', '-')),
     time_created = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     status = models.BooleanField(default=False, verbose_name='Активно')
 
